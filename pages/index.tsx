@@ -1,19 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
+import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import Head from "next/head";
 import Image from "next/image";
 import { ReactElement } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
-import coffeeStores from "../data/coffee-stores.json";
+import coffeeStoresData from "../data/coffee-stores.json";
 import styles from "../styles/Home.module.css";
-
-export async function getStaticProps(context: any) {
-	return {
-		props: {
-			coffeeStores,
-		}, // will be passed to the page component as props
-	};
-}
 
 interface CoffeeStores {
 	coffeeStores: CoffeeStore[];
@@ -28,8 +21,16 @@ interface CoffeeStore {
 	neighbourhood: string;
 }
 
+export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<CoffeeStores>> {
+	return {
+		props: {
+			coffeeStores: coffeeStoresData,
+		}, // will be passed to the page component as props
+	};
+}
+
+
 function Home(props: CoffeeStores): ReactElement {
-	console.log(props);
 	const handleOnBannerBtnClick = () => {
 		console.log("Hi Banner button");
 	};
@@ -46,16 +47,21 @@ function Home(props: CoffeeStores): ReactElement {
 				<div className={styles.heroImage}>
 					<Image src="/static/hero-image.png" width={700} height={400} />
 				</div>
-				<div className={styles.cardLayout}>
-					{props.coffeeStores.map((coffeeStore: CoffeeStore) => (
-						<Card
-							key={coffeeStore.id}
-							name={coffeeStore.name}
-							imgUrl={coffeeStore.imgUrl}
-							href={`/coffee-store/${coffeeStore.id}`}
-						/>
-					))}
-				</div>
+				{props.coffeeStores.length > 0 && (
+					<>
+						<h2 className={styles.heading2}>Toronto stores</h2>
+						<div className={styles.cardLayout}>
+							{props.coffeeStores.map((coffeeStore: CoffeeStore) => (
+								<Card
+									key={coffeeStore.id}
+									name={coffeeStore.name}
+									imgUrl={coffeeStore.imgUrl}
+									href={`/coffee-store/${coffeeStore.id}`}
+								/>
+							))}
+						</div>
+					</>
+				)}
 			</main>
 		</div>
 	);

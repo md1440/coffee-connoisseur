@@ -24,9 +24,6 @@
   grid-template-columns: repeat(1, minmax(0, 1fr));
   column-gap: 1.5rem;
   row-gap: 1.5rem;
-}
-
-.card {
   justify-content: center;
 }
 

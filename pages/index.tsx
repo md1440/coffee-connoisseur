@@ -5,43 +5,26 @@ import Image from "next/image";
 import { ReactElement } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
+import fetchCoffeeStores from "../lib/coffee-stores-api";
+import { CoffeeStore } from '../lib/types/types';
 // import coffeeStoresData from "../data/coffee-stores.json";
 import styles from "../styles/Home.module.css";
 
-interface CoffeeStores {
+interface Props {
 	coffeeStores: CoffeeStore[];
 }
 
-interface CoffeeStore {
-	fsq_id: number;
-	name: string;
-	imgUrl: string;
-	websiteUrl: string;
-	address: string;
-	neighbourhood: string;
-}
-
 export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<CoffeeStores>> {
-	const options = {
-		method: "GET",
-		headers: {
-			Accept: "application/json",
-			Authorization: process.env.FOURSQUARE_API_KEY as string,
-		},
-	};
-
-	const res = await fetch("https://api.foursquare.com/v3/places/nearby?ll=52.53%2C13.41&query=cafe&limit=12", options);
-	const data = await res.json();
-	console.log(data.results);
+	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
 
 	return {
 		props: {
-			coffeeStores: data.results,
+			coffeeStores,
 		}, // will be passed to the page component as props
 	};
 }
 
-function Home(props: CoffeeStores): ReactElement {
+function Home({coffeeStores}: Props): ReactElement {
 	const handleOnBannerBtnClick = () => {
 		console.log("Hi Banner button");
 	};
@@ -58,15 +41,18 @@ function Home(props: CoffeeStores): ReactElement {
 				<div className={styles.heroImage}>
 					<Image src="/static/hero-image.png" width={700} height={400} />
 				</div>
-				{props.coffeeStores.length > 0 && (
+				{coffeeStores.length > 0 && (
 					<>
 						<h2 className={styles.heading2}>Toronto stores</h2>
 						<div className={styles.cardLayout}>
-							{props.coffeeStores.map((coffeeStore: CoffeeStore) => (
+							{coffeeStores.map((coffeeStore: CoffeeStore) => (
 								<Card
 									key={coffeeStore.fsq_id}
 									name={coffeeStore.name}
-									imgUrl={coffeeStore.imgUrl || 'https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80'}
+									imgUrl={
+										coffeeStore.imgUrl ||
+										"https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"
+									}
 									href={`/coffee-store/${coffeeStore.fsq_id}`}
 								/>
 							))}

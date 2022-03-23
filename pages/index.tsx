@@ -1,11 +1,11 @@
 /* eslint-disable react/destructuring-assignment */
-import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
+import { GetStaticPropsContext, GetStaticPropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { ReactElement } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
-import coffeeStoresData from "../data/coffee-stores.json";
+// import coffeeStoresData from "../data/coffee-stores.json";
 import styles from "../styles/Home.module.css";
 
 interface CoffeeStores {
@@ -13,7 +13,7 @@ interface CoffeeStores {
 }
 
 interface CoffeeStore {
-	id: number;
+	fsq_id: number;
 	name: string;
 	imgUrl: string;
 	websiteUrl: string;
@@ -22,13 +22,24 @@ interface CoffeeStore {
 }
 
 export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<CoffeeStores>> {
+	const options = {
+		method: "GET",
+		headers: {
+			Accept: "application/json",
+			Authorization: process.env.FOURSQUARE_API_KEY as string,
+		},
+	};
+
+	const res = await fetch("https://api.foursquare.com/v3/places/nearby?ll=52.53%2C13.41&query=cafe&limit=12", options);
+	const data = await res.json();
+	console.log(data.results);
+
 	return {
 		props: {
-			coffeeStores: coffeeStoresData,
+			coffeeStores: data.results,
 		}, // will be passed to the page component as props
 	};
 }
-
 
 function Home(props: CoffeeStores): ReactElement {
 	const handleOnBannerBtnClick = () => {
@@ -53,10 +64,10 @@ function Home(props: CoffeeStores): ReactElement {
 						<div className={styles.cardLayout}>
 							{props.coffeeStores.map((coffeeStore: CoffeeStore) => (
 								<Card
-									key={coffeeStore.id}
+									key={coffeeStore.fsq_id}
 									name={coffeeStore.name}
-									imgUrl={coffeeStore.imgUrl}
-									href={`/coffee-store/${coffeeStore.id}`}
+									imgUrl={coffeeStore.imgUrl || 'https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80'}
+									href={`/coffee-store/${coffeeStore.fsq_id}`}
 								/>
 							))}
 						</div>

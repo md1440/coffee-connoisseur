@@ -34,6 +34,8 @@ export async function getStaticProps({ params }: Params) {
 	};
 }
 
+// https://nextjs.org/docs/api-reference/data-fetching/get-static-paths
+
 export async function getStaticPaths(): Promise<GetStaticPathsResult<Params>> {
 	const paths = coffeeStoresData.map((coffeeStore: CoffeeStore) => {
 		return { params: { id: coffeeStore.id.toString() } };
@@ -41,7 +43,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<Params>> {
 
 	return {
 		paths,
-		fallback: true,
+		fallback: true, // requires if (router.isFallback) {return <div>Loading...</div>}
 	};
 }
 

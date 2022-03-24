@@ -8,26 +8,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
-import coffeeStoresData from "../../data/coffee-stores.json";
+import fetchCoffeeStores from "../../lib/coffee-stores-api";
+import { CoffeeStore } from "../../lib/types/types";
+// import coffeeStoresData from "../../data/coffee-stores.json";
 import styles from "../../styles/CoffeeStore.module.css";
 
-interface CoffeeStores {
-	coffeeStores: CoffeeStore[];
-}
-
-interface CoffeeStore {
-	id: number;
-	name: string;
-	imgUrl: string;
-	websiteUrl: string;
-	address: string;
-	neighbourhood: string;
-}
-
 export async function getStaticProps({ params }: Params) {
+	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
+
 	return {
 		props: {
-			coffeeStore: coffeeStoresData.find((coffeeStore: CoffeeStore) => {
+			coffeeStore: coffeeStores.find((coffeeStore: CoffeeStore) => {
 				return coffeeStore.id.toString() === params.id;
 			}),
 		}, // will be passed to the page component as props
@@ -37,7 +28,9 @@ export async function getStaticProps({ params }: Params) {
 // https://nextjs.org/docs/api-reference/data-fetching/get-static-paths
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult<Params>> {
-	const paths = coffeeStoresData.map((coffeeStore: CoffeeStore) => {
+	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
+
+	const paths = coffeeStores.map((coffeeStore: CoffeeStore) => {
 		return { params: { id: coffeeStore.id.toString() } };
 	});
 
@@ -75,17 +68,28 @@ function CoffeeStorePage({ coffeeStore }: Props): ReactElement {
 					<div className={styles.nameWrapper}>
 						<h1 className={styles.name}>{coffeeStore.name}</h1>
 					</div>
-					<Image src={coffeeStore.imgUrl} width={600} height={360} className={styles.storeImg} alt={coffeeStore.name} />
+					<Image
+						src={
+							coffeeStore.imgUrl||
+							"https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"
+						}
+						width={600}
+						height={360}
+						className={styles.storeImg}
+						alt={coffeeStore.name}
+					/>
 				</div>
 				<div className={cls("glass", styles.col2)}>
 					<div className={styles.iconWrapper}>
 						<Image src="/static/icons/places.svg" width="24" height="24" />
 						<p className={styles.text}>{coffeeStore.address}</p>
 					</div>
-					<div className={styles.iconWrapper}>
-						<Image src="/static/icons/nearMe.svg" width="24" height="24" />
-						<p className={styles.text}>{coffeeStore.neighbourhood}</p>
-					</div>
+					{coffeeStore.neighbourhood && (
+						<div className={styles.iconWrapper}>
+							<Image src="/static/icons/nearMe.svg" width="24" height="24" />
+							<p className={styles.text}>{coffeeStore.neighbourhood}</p>
+						</div>
+					)}
 					<div className={styles.iconWrapper}>
 						<Image src="/static/icons/star.svg" width="24" height="24" />
 						<p className={styles.text}>{1}</p>

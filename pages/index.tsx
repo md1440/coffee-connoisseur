@@ -15,7 +15,7 @@ interface Props {
 
 export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<Props>> {
 	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
-
+	console.log(coffeeStores)
 	return {
 		props: {
 			coffeeStores,

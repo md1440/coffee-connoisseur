@@ -1,10 +1,13 @@
 /* eslint-disable react/destructuring-assignment */
 import { GetStaticPropsContext, GetStaticPropsResult } from "next";
+import Error from 'next/error';
 import Head from "next/head";
 import Image from "next/image";
-import { ReactElement } from "react";
+import { off } from "process";
+import { ErrorInfo, ReactElement, useEffect, useState, VoidFunctionComponent } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
+import useTrackLocation from "../hooks/use-track-location";
 import fetchCoffeeStores from "../lib/coffee-stores-api";
 import { CoffeeStore } from "../lib/types/types";
 import styles from "../styles/Home.module.css";
@@ -15,7 +18,6 @@ interface Props {
 
 export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<Props>> {
 	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
-	console.log(coffeeStores)
 	return {
 		props: {
 			coffeeStores,
@@ -24,9 +26,38 @@ export async function getStaticProps(context: GetStaticPropsContext): Promise<Ge
 }
 
 function Home({ coffeeStores }: Props): ReactElement {
+	const { handleTrackLocation, latLong, locationErrMsg, isFindingLocation } = useTrackLocation();
+	const [localCoffeeStores, setLocalCoffeestores] = useState<CoffeeStore[] | []>([]);
+	const [coffeeStoresErr, setCoffeeStoresErr] = useState<null | string>(null);
+	
+	// console.log({ latLong, locationErrMsg, isFindingLocation });
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(() => {
+		const setCoffeeStoresByLocation = async () => {
+			if (latLong) {
+				try {
+					const fetchData = async () => {
+						const clientFetchedCoffeeStores = await fetchCoffeeStores(latLong, "coffee", 30);
+						return clientFetchedCoffeeStores;
+					};
+					const data: CoffeeStore[] = await fetchData();
+					setLocalCoffeestores(data);
+					setCoffeeStoresErr('');
+
+				} catch (err: any) {
+					console.error(err);
+					setCoffeeStoresErr(err.message)
+				}
+			}
+		};
+		setCoffeeStoresByLocation();
+	}, [latLong]);
+
 	const handleOnBannerBtnClick = () => {
-		console.log("Hi Banner button");
+		handleTrackLocation();
 	};
+
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -36,12 +67,36 @@ function Home({ coffeeStores }: Props): ReactElement {
 			</Head>
 
 			<main className={styles.main}>
-				<Banner buttonText="View stores nearby" handleOnClick={handleOnBannerBtnClick} />
+				<Banner
+					buttonText={isFindingLocation ? "Locating..." : "View stores nearby"}
+					handleOnClick={handleOnBannerBtnClick}
+				/>
+				{locationErrMsg && <p>Something went wrong: {locationErrMsg}</p>}
 				<div className={styles.heroImage}>
 					<Image src="/static/hero-image.png" width={700} height={400} />
 				</div>
-				{coffeeStores.length > 0 && (
-					<>
+
+				{localCoffeeStores.length > 0 && (
+					<div className={styles.sectionWrapper}>
+						<h2 className={styles.heading2}>Stores near me...</h2>
+						<div className={styles.cardLayout}>
+							{localCoffeeStores.map((coffeeStore: CoffeeStore) => (
+								<Card
+									key={coffeeStore.id}
+									name={coffeeStore.name}
+									imgUrl={
+										coffeeStore.imgUrl ||
+										"https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+									}
+									href={`/coffee-store/${coffeeStore.id}`}
+								/>
+							))}
+						</div>
+					</div>
+				)}
+
+				{ coffeeStores.length > 0 && (
+					<div className={styles.sectionWrapper}>
 						<h2 className={styles.heading2}>Berlin stores</h2>
 						<div className={styles.cardLayout}>
 							{coffeeStores.map((coffeeStore: CoffeeStore) => (
@@ -56,7 +111,7 @@ function Home({ coffeeStores }: Props): ReactElement {
 								/>
 							))}
 						</div>
-					</>
+					</div>
 				)}
 			</main>
 		</div>

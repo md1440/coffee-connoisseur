@@ -15,12 +15,13 @@ import styles from "../../styles/CoffeeStore.module.css";
 
 export async function getStaticProps({ params }: Params) {
 	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
+	const findCoffeeStoreById = coffeeStores.find((coffeeStore: CoffeeStore) => {
+				return coffeeStore.id.toString() === params.id;
+			})
 
 	return {
 		props: {
-			coffeeStore: coffeeStores.find((coffeeStore: CoffeeStore) => {
-				return coffeeStore.id.toString() === params.id;
-			}),
+			coffeeStore: findCoffeeStoreById || {},
 		}, // will be passed to the page component as props
 	};
 }

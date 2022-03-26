@@ -1,6 +1,6 @@
 /** By default, this is a mobile breakpoint **/
 .container {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 2;
 }
@@ -44,7 +44,7 @@
 
   padding-top: 1rem /* 16px */;
   padding-bottom: 1rem /* 16px */;
-  margin-bottom: 4rem;
+  /* margin-bottom: 4rem; */
   font-size: 1.125rem /* 18px */;
   line-height: 1.75rem /* 28px */;
   padding-left: 2.5rem /* 40px */;

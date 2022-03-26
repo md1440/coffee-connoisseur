@@ -3,13 +3,13 @@ import { CoffeeStore, Venue } from "./types/types";
 
 // unsplash api
 const unsplashApi = createApi({
-	accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
+	accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY as string,
 	// ...other fetch options
 });
 
 const getListOfCoffeeStorePhotos = async () => {
 	const photos = await unsplashApi.search.getPhotos({
-		query: "coffee",
+		query: "coffee store",
 		perPage: 40,
 	});
 
@@ -20,10 +20,14 @@ const getListOfCoffeeStorePhotos = async () => {
 };
 
 // fourqsuare api
-const getUrlForCoffeeStores = (latLong: any, query: string, limit: number) =>
-	`https://api.foursquare.com/v3/places/nearby?ll=${latLong}&query=${query}&limit=${limit}`;
+const getUrlForCoffeeStores = (latLong: string, query: string, limit: number) => {
+	const latLongArr = latLong.split(",");
+	const latLongTransform = latLongArr.map(el => String(Number(el.trim()).toFixed(2)));
 
-export default async function fetchCoffeeStores(latLong = "52.53%2C13.41", query = "coffee", limit = 24) {
+	return `https://api.foursquare.com/v3/places/nearby?ll=${latLongTransform.join(",")}&query=${query}&limit=${limit}`;
+};
+
+export default async function fetchCoffeeStores(latLong = "52.53,13.41", query = "coffee", limit = 24) {
 	try {
 		const photos = await getListOfCoffeeStorePhotos();
 
@@ -31,12 +35,13 @@ export default async function fetchCoffeeStores(latLong = "52.53%2C13.41", query
 			method: "GET",
 			headers: {
 				Accept: "application/json",
-				Authorization: process.env.FOURSQUARE_API_KEY as string,
+				Authorization: process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY as string,
 			},
 		};
 
 		const res = await fetch(getUrlForCoffeeStores(latLong, query, limit), options);
 		const data = await res.json();
+		console.log(data)
 
 		return (
 			data.results?.map((venue: Venue, idx: number) => {
@@ -53,7 +58,7 @@ export default async function fetchCoffeeStores(latLong = "52.53%2C13.41", query
 			}) || []
 		);
 	} catch (error) {
-		if (!process.env.FOURSQUARE_API_KEY || !process.env.UNSPLASH_ACCESS_KEY) {
+		if (!process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY || !process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY) {
 			console.error("🚨 Make sure to setup your API keys, checkout the docs on Github 🚨");
 		}
 		console.log("Something went wrong fetching coffee stores", error);

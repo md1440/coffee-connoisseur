@@ -15,8 +15,15 @@ const getListOfCoffeeStorePhotos = async () => {
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const unsplashResults = photos!.response!.results || [];
+	
+	// shuffle photos 
+	const photosShuffled = unsplashResults
+		.map(value => ({ value, sort: Math.random() }))
+		.sort((a, b) => a.sort - b.sort)
+		.map(({ value }) => value);
+	
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return unsplashResults!.map(photo => photo.urls.small);
+	return photosShuffled!.map(photo => photo.urls.small);
 };
 
 // fourqsuare api
@@ -41,7 +48,7 @@ export default async function fetchCoffeeStores(latLong = "52.53,13.41", query =
 
 		const res = await fetch(getUrlForCoffeeStores(latLong, query, limit), options);
 		const data = await res.json();
-		console.log(data)
+		// console.log(data)
 
 		return (
 			data.results?.map((venue: Venue, idx: number) => {

@@ -1,16 +1,15 @@
 /* eslint-disable react/destructuring-assignment */
 import { GetStaticPropsContext, GetStaticPropsResult } from "next";
-import Error from 'next/error';
 import Head from "next/head";
 import Image from "next/image";
-import { off } from "process";
-import { ErrorInfo, ReactElement, useEffect, useState, VoidFunctionComponent } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
 import useTrackLocation from "../hooks/use-track-location";
 import fetchCoffeeStores from "../lib/coffee-stores-api";
 import { CoffeeStore } from "../lib/types/types";
 import styles from "../styles/Home.module.css";
+import { StoreContext } from "./_app";
 
 interface Props {
 	coffeeStores: CoffeeStore[];
@@ -26,11 +25,14 @@ export async function getStaticProps(context: GetStaticPropsContext): Promise<Ge
 }
 
 function Home({ coffeeStores }: Props): ReactElement {
-	const { handleTrackLocation, latLong, locationErrMsg, isFindingLocation } = useTrackLocation();
-	const [localCoffeeStores, setLocalCoffeestores] = useState<CoffeeStore[] | []>([]);
+	const { handleTrackLocation, locationErrMsg, isFindingLocation } = useTrackLocation();
+	// const [localCoffeeStores, setLocalCoffeestores] = useState<CoffeeStore[] | []>([]);
 	const [coffeeStoresErr, setCoffeeStoresErr] = useState<null | string>(null);
-	
-	// console.log({ latLong, locationErrMsg, isFindingLocation });
+	const { store, dispatch } = useContext(StoreContext);
+	const localCoffeeStores = store.coffeeStores;
+	const { latLong } = store;
+
+	console.log({ locationErrMsg, isFindingLocation });
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
@@ -42,12 +44,15 @@ function Home({ coffeeStores }: Props): ReactElement {
 						return clientFetchedCoffeeStores;
 					};
 					const data: CoffeeStore[] = await fetchData();
-					setLocalCoffeestores(data);
-					setCoffeeStoresErr('');
-
+					// setLocalCoffeestores(data);
+					dispatch({
+						type: "SetCoffeeStores",
+						payload: { coffeeStores: data },
+					});
+					setCoffeeStoresErr("");
 				} catch (err: any) {
-					console.error(err);
-					setCoffeeStoresErr(err.message)
+					// console.error(err);
+					setCoffeeStoresErr(err.message);
 				}
 			}
 		};
@@ -95,7 +100,7 @@ function Home({ coffeeStores }: Props): ReactElement {
 					</div>
 				)}
 
-				{ coffeeStores.length > 0 && (
+				{coffeeStores.length > 0 && (
 					<div className={styles.sectionWrapper}>
 						<h2 className={styles.heading2}>Berlin stores</h2>
 						<div className={styles.cardLayout}>

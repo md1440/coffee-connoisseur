@@ -31,8 +31,6 @@ function Home({ coffeeStores }: Props): ReactElement {
 	const localCoffeeStores = store.coffeeStores;
 	const { latLong } = store;
 
-	console.log({ locationErrMsg, isFindingLocation });
-
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		const setCoffeeStoresByLocation = async () => {
@@ -50,7 +48,6 @@ function Home({ coffeeStores }: Props): ReactElement {
 					});
 					setCoffeeStoresErr("");
 				} catch (err: any) {
-					// console.error(err);
 					setCoffeeStoresErr(err.message);
 				}
 			}

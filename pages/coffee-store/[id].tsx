@@ -7,11 +7,12 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
+import { useLatLongStoreContext } from "../../hooks/use-store-context";
 import fetchCoffeeStores from "../../lib/coffee-stores-api";
 import { CoffeeStore } from "../../lib/types/types";
-// import coffeeStoresData from "../../data/coffee-stores.json";
 import styles from "../../styles/CoffeeStore.module.css";
+import { isEmpty } from '../../utils';
 
 export async function getStaticProps({ params }: Params) {
 	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
@@ -21,7 +22,7 @@ export async function getStaticProps({ params }: Params) {
 
 	return {
 		props: {
-			coffeeStore: findCoffeeStoreById || {},
+			initialCoffeeStore: findCoffeeStoreById || {},
 		}, // will be passed to the page component as props
 	};
 }
@@ -42,11 +43,29 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<Params>> {
 }
 
 interface Props {
-	coffeeStore: CoffeeStore;
+	initialCoffeeStore: CoffeeStore;
 }
 
-function CoffeeStorePage({ coffeeStore }: Props): ReactElement {
+function CoffeeStorePage({ initialCoffeeStore }: Props): ReactElement {
 	const router = useRouter();
+	const { id } = router.query;
+
+	const [coffeeStore, setCoffeeStore] = useState(initialCoffeeStore || {});
+	
+	const {
+		store: { coffeeStores },
+	} = useLatLongStoreContext();
+
+	useEffect(() => {
+		if (isEmpty(initialCoffeeStore)) {
+			if (coffeeStores.length > 0) {
+				const coffeeStoreFromContext = coffeeStores.find((foundCoffeeStore: CoffeeStore) => {
+					return foundCoffeeStore.id.toString() === id;
+				});
+				setCoffeeStore(coffeeStoreFromContext as CoffeeStore);
+			}
+		}
+	}, [id, coffeeStores, initialCoffeeStore]);
 
 	const handleUpvoteButton = () => {};
 

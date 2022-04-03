@@ -2,14 +2,14 @@
 import { GetStaticPropsContext, GetStaticPropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { ReactElement, useContext, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
+import { useLatLongStoreContext } from "../hooks/use-store-context";
 import useTrackLocation from "../hooks/use-track-location";
 import fetchCoffeeStores from "../lib/coffee-stores-api";
 import { CoffeeStore } from "../lib/types/types";
 import styles from "../styles/Home.module.css";
-import { StoreContext } from "./_app";
 
 interface Props {
 	coffeeStores: CoffeeStore[];
@@ -26,9 +26,8 @@ export async function getStaticProps(context: GetStaticPropsContext): Promise<Ge
 
 function Home({ coffeeStores }: Props): ReactElement {
 	const { handleTrackLocation, locationErrMsg, isFindingLocation } = useTrackLocation();
-	// const [localCoffeeStores, setLocalCoffeestores] = useState<CoffeeStore[] | []>([]);
 	const [coffeeStoresErr, setCoffeeStoresErr] = useState<null | string>(null);
-	const { store, dispatch } = useContext(StoreContext);
+	const { store, dispatch } = useLatLongStoreContext();
 	const localCoffeeStores = store.coffeeStores;
 	const { latLong } = store;
 
@@ -57,7 +56,7 @@ function Home({ coffeeStores }: Props): ReactElement {
 			}
 		};
 		setCoffeeStoresByLocation();
-	}, [latLong]);
+	}, [latLong, dispatch]);
 
 	const handleOnBannerBtnClick = () => {
 		handleTrackLocation();

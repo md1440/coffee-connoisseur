@@ -16,8 +16,8 @@ import styles from "../../styles/CoffeeStore.module.css";
 export async function getStaticProps({ params }: Params) {
 	const coffeeStores: CoffeeStore[] = await fetchCoffeeStores();
 	const findCoffeeStoreById = coffeeStores.find((coffeeStore: CoffeeStore) => {
-				return coffeeStore.id.toString() === params.id;
-			})
+		return coffeeStore.id.toString() === params.id;
+	});
 
 	return {
 		props: {

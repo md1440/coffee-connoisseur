@@ -48,7 +48,6 @@ export default async function fetchCoffeeStores(latLong = "52.53,13.41", query =
 
 		const res = await fetch(getUrlForCoffeeStores(latLong, query, limit), options);
 		const data = await res.json();
-		// console.log(data)
 
 		return (
 			data.results?.map((venue: Venue, idx: number) => {

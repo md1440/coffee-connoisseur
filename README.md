@@ -1,34 +1,94 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Coffee Connoiseur
+> A NextJS Coffee Store Finder Frontend.
+> Live demo [_here_](https://coffee-connoisseur-lyart.vercel.app/). 
 
-## Getting Started
+## Table of Contents
+- [](#)
+  - [General Information](#general-information)
+  - [Technologies Used](#technologies-used)
+  - [Features](#features)
+  <!-- - [Screenshots](#screenshots) -->
+  <!-- - [Setup](#setup) -->
+  <!-- - [Usage](#usage) -->
+  - [Project Status](#project-status)
+  <!-- - [Room for Improvement](#room-for-improvement) -->
+  - [Acknowledgements](#acknowledgements)
+  <!-- - [Contact](#contact) -->
+<!-- * [License](#license) -->
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## General Information
+- Exploring NextJS with Typescript further
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Technologies Used
+- NextJS
+- TypeScript
+- CSS modules
+- SWR
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Features
+<!-- List the ready features here: -->
+- get local stores based on your latitude longitude
+<!-- - add/update movie form
+- personal watchlist -->
 
-## Learn More
+<!-- ## Technical Features
 
-To learn more about Next.js, take a look at the following resources:
+- debounced search (custom hook)
+- localstorage for watchlist with useReducer (custom hook)
+- inputfocus for form (custom hook)
+- custom api & hooks for fetch requests with axios & swr -->
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<!-- ## Screenshots
+![Example screenshot](./api_overview.jpg) -->
+<!-- If you have screenshots you'd like to share, include them here. -->
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+<!-- ## Setup
+What are the project requirements/dependencies? Where are they listed? A requirements.txt or a Pipfile.lock file perhaps? Where is it located?
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Proceed to describe how to install / setup one's local environment / get started with the project. -->
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+<!-- ## Usage -->
+<!-- How does one go about using it?
+Provide various use cases and code examples here. -->
+
+<!-- `write-your-code-here` -->
+
+
+## Project Status
+Project is: a work in _progress_
+<!-- If you are no longer working on it, provide reasons why. -->
+
+
+<!-- ## Room for Improvement -->
+<!-- Include areas you believe need improvement / could be improved. Also add TODOs for future development. -->
+
+<!-- Room for improvement:
+- Authentication for delete operations -->
+<!-- - Improvement to be done 2 -->
+
+<!-- To do:
+- Feature to be added 1
+- Feature to be added 2 -->
+
+
+## Acknowledgements
+<!-- Give credit here. -->
+- This project was based on and adapted [Complete Next.js Developer in 2022: Zero to Mastery
+](https://www.udemy.com/course/complete-nextjs-developer-zero-to-mastery/).
+
+
+
+<!-- ## Contact
+Created by [@flynerdpl](https://www.flynerd.pl/) - feel free to contact me! -->
+
+
+<!-- Optional -->
+<!-- ## License -->
+<!-- This project is open source and available under the [... License](). -->
+
+<!-- You don't have to include all sections - just the one's relevant to your project -->
